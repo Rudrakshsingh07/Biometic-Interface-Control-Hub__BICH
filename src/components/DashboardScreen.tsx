@@ -1,5 +1,4 @@
 import { ClockDisplay } from "@/components/ClockDisplay";
-import { WeatherWidget } from "@/components/WeatherWidget";
 import { CalendarWidget } from "@/components/CalendarWidget";
 import { AnalyticsWidget } from "@/components/AnalyticsWidget";
 import { CommandsWidget } from "@/components/CommandsWidget";
@@ -46,35 +45,30 @@ export function DashboardScreen({ userId, analytics, sessionStartRef, onLogout, 
           </div>
         </div>
 
-        {/* Bento Grid */}
-        <div className="flex-1 grid grid-cols-12 grid-rows-6 gap-2.5 min-h-0">
-          {/* Commands — Primary area, left 8 cols, all rows */}
-          <div className="col-span-8 row-span-6">
-            <CommandsWidget />
-          </div>
-
-          {/* Clock — top right compact */}
-          <div className="col-span-4 row-span-2">
-            <ClockDisplay size="small" />
-          </div>
-
-          {/* Weather + Calendar row */}
-          <div className="col-span-2 row-span-2">
-            <WeatherWidget />
-          </div>
-          <div className="col-span-2 row-span-2">
-            <CalendarWidget />
-          </div>
-
-          {/* Analytics + version */}
-          <div className="col-span-3 row-span-2">
-            <AnalyticsWidget analytics={analytics} sessionStartRef={sessionStartRef} />
-          </div>
-          <div className="col-span-1 row-span-2">
-            <div className="glass-panel h-full flex flex-col items-center justify-center gap-1 p-2">
-              <span className="text-[10px] font-mono text-muted-foreground leading-tight text-center">DESK<br/>COMPANION</span>
-              <span className="text-[9px] font-mono text-muted-foreground/40">v1.0</span>
+        {/* Main Layout — two columns */}
+        <div className="flex-1 flex gap-3 min-h-0">
+          {/* Left: Commands + small widgets */}
+          <div className="flex-1 flex flex-col gap-3 min-h-0">
+            <div className="flex-1 min-h-0">
+              <CommandsWidget />
             </div>
+            <div className="flex gap-3 h-24">
+              <div className="flex-1">
+                <ClockDisplay size="small" />
+              </div>
+              <div className="w-40">
+                <CalendarWidget />
+              </div>
+              <div className="glass-panel flex flex-col items-center justify-center gap-1 p-2 w-20">
+                <span className="text-[10px] font-mono text-muted-foreground leading-tight text-center">DESK<br/>COMPANION</span>
+                <span className="text-[9px] font-mono text-muted-foreground/40">v1.0</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Analytics with charts */}
+          <div className="w-80 min-h-0">
+            <AnalyticsWidget analytics={analytics} sessionStartRef={sessionStartRef} />
           </div>
         </div>
       </div>
