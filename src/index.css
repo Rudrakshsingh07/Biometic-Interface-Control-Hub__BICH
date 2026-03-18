@@ -6,49 +6,49 @@
 
 @layer base {
   :root {
-    --background: 240 15% 4%;
-    --foreground: 220 20% 88%;
+    --background: 220 12% 7%;
+    --foreground: 220 15% 85%;
 
-    --card: 240 12% 8%;
-    --card-foreground: 220 20% 88%;
+    --card: 220 10% 11%;
+    --card-foreground: 220 15% 85%;
 
-    --popover: 240 12% 8%;
-    --popover-foreground: 220 20% 88%;
+    --popover: 220 10% 11%;
+    --popover-foreground: 220 15% 85%;
 
     --primary: 160 60% 45%;
-    --primary-foreground: 240 15% 4%;
+    --primary-foreground: 220 12% 7%;
 
-    --secondary: 240 10% 14%;
-    --secondary-foreground: 220 20% 75%;
+    --secondary: 220 8% 18%;
+    --secondary-foreground: 220 15% 75%;
 
-    --muted: 240 10% 12%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 220 8% 15%;
+    --muted-foreground: 220 8% 50%;
 
     --accent: 200 80% 55%;
-    --accent-foreground: 240 15% 4%;
+    --accent-foreground: 220 12% 7%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 16%;
-    --input: 240 10% 16%;
+    --border: 220 8% 22%;
+    --input: 220 8% 22%;
     --ring: 160 60% 45%;
 
     --radius: 0.75rem;
 
     --warning: 35 90% 55%;
-    --warning-foreground: 240 15% 4%;
+    --warning-foreground: 220 12% 7%;
 
     --glow-primary: 0 0 20px hsl(160 60% 45% / 0.15);
     --glow-accent: 0 0 20px hsl(200 80% 55% / 0.15);
 
-    --sidebar-background: 240 12% 6%;
-    --sidebar-foreground: 220 20% 88%;
+    --sidebar-background: 220 10% 9%;
+    --sidebar-foreground: 220 15% 85%;
     --sidebar-primary: 160 60% 45%;
-    --sidebar-primary-foreground: 240 15% 4%;
-    --sidebar-accent: 240 10% 14%;
-    --sidebar-accent-foreground: 220 20% 88%;
-    --sidebar-border: 240 10% 16%;
+    --sidebar-primary-foreground: 220 12% 7%;
+    --sidebar-accent: 220 8% 18%;
+    --sidebar-accent-foreground: 220 15% 85%;
+    --sidebar-border: 220 8% 22%;
     --sidebar-ring: 160 60% 45%;
   }
 }
@@ -67,10 +67,16 @@
   }
 
   html, body, #root {
-    height: 100%;
     width: 100%;
+    height: 100%;
+    min-height: 100dvh;
     margin: 0;
     padding: 0;
+  }
+
+  /* Ensure absolutely-positioned screens can reliably fill viewport */
+  #root {
+    height: 100dvh;
   }
 }
 
@@ -84,117 +90,770 @@
   }
 
   .border-glow {
-    box-shadow: var(--glow-primary), inset 0 1px 0 hsl(220 20% 88% / 0.05);
+    box-shadow: var(--glow-primary), inset 0 1px 0 hsl(220 15% 85% / 0.05);
   }
 
   .glass-panel {
     @apply bg-card/80 backdrop-blur-md border border-border rounded-lg;
   }
 
-  /* === Skeuomorphic Macropad === */
+  /* ============================================================
+     ULTRA-REALISTIC METALLIC MACROPAD DESIGN SYSTEM
+     Specular highlights · Ambient reflections · Deep shadows
+     ============================================================ */
+
+  /* ── Main Chassis / Body ──
+     Thick milled aluminum slab with directional light source
+     from top-left, casting specular highlight band and deep
+     shadow on bottom-right. Brushed grain overlay. */
   .macropad-body {
-    background: linear-gradient(145deg, hsl(220 10% 22%), hsl(220 8% 15%));
-    border: 1px solid hsl(220 8% 28%);
+    background:
+      /* Specular highlight band — simulates overhead light reflection */
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.08) 0%,
+        rgba(255,255,255, 0.03) 20%,
+        transparent 40%,
+        transparent 70%,
+        rgba(0,0,0, 0.08) 100%
+      ),
+      /* Base metal gradient */
+      linear-gradient(
+        160deg,
+        hsl(215 6% 42%) 0%,
+        hsl(215 5% 34%) 20%,
+        hsl(215 5% 28%) 50%,
+        hsl(215 5% 22%) 80%,
+        hsl(215 6% 18%) 100%
+      );
+    border: 1px solid hsl(215 5% 46%);
+    border-bottom-color: hsl(215 8% 12%);
+    border-right-color: hsl(215 8% 14%);
     border-radius: 1rem;
     box-shadow:
-      0 1px 0 hsl(220 10% 30%) inset,
-      0 -1px 0 hsl(220 10% 10%) inset,
-      0 8px 24px -4px rgba(0, 0, 0, 0.5),
-      0 2px 8px rgba(0, 0, 0, 0.3);
+      /* ─ Top edge: bright chamfer catch ─ */
+      inset 0 1px 0 0 hsl(215 6% 62%),
+      inset 0 2px 1px 0 hsl(215 6% 52%),
+      /* ─ Left edge: secondary light catch ─ */
+      inset 1px 0 0 0 hsl(215 6% 50%),
+      /* ─ Bottom edge: dark undercut ─ */
+      inset 0 -1px 0 0 hsl(215 8% 10%),
+      inset 0 -2px 1px 0 hsl(215 8% 8%),
+      /* ─ Right edge: shadow ─ */
+      inset -1px 0 0 0 hsl(215 6% 16%),
+      /* ─ Elevation shadows ─ */
+      0 2px 4px rgba(0,0,0,0.25),
+      0 6px 16px -2px rgba(0,0,0,0.4),
+      0 12px 40px -6px rgba(0,0,0,0.5),
+      /* ─ Contact shadow ─ */
+      0 1px 2px rgba(0,0,0,0.3);
+    position: relative;
   }
 
+  /* Brushed-metal directional grain */
+  .macropad-body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        rgba(255,255,255, 0.018) 1px,
+        transparent 2px,
+        rgba(0,0,0, 0.022) 3px,
+        transparent 4px
+      );
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+
+  /* Ambient light reflection on top portion */
+  .macropad-body::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 40%;
+    border-radius: inherit;
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255, 0.04) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ── Metallic Keycap — Silver / Chrome ──
+     CNC-machined look: bright specular top edge,
+     ambient reflection on face, deep drop shadow underneath.
+     Directional light from top-left. */
   .macropad-key {
     border-radius: 0.75rem;
     cursor: pointer;
     user-select: none;
     border: 1px solid transparent;
-    transition: all 0.1s ease;
+    transition: all 0.08s ease;
+    position: relative;
+    z-index: 2;
   }
 
   .macropad-key-silver {
-    background: linear-gradient(180deg, hsl(220 8% 35%), hsl(220 8% 22%));
-    border-color: hsl(220 8% 38%);
+    background:
+      /* Specular highlight — top-left light catch */
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.18) 0%,
+        rgba(255,255,255, 0.06) 25%,
+        transparent 50%
+      ),
+      /* Chrome gradient */
+      linear-gradient(
+        180deg,
+        hsl(215 5% 78%) 0%,
+        hsl(215 4% 68%) 10%,
+        hsl(215 4% 58%) 30%,
+        hsl(215 4% 50%) 60%,
+        hsl(215 5% 42%) 85%,
+        hsl(215 5% 38%) 100%
+      );
+    border-color: hsl(215 4% 62%);
+    border-bottom-color: hsl(215 6% 30%);
+    border-right-color: hsl(215 6% 34%);
+    color: hsl(215 8% 20%);
     box-shadow:
-      0 1px 0 hsl(220 8% 42%) inset,
-      0 -1px 2px hsl(220 10% 12%) inset,
-      0 4px 8px -2px rgba(0, 0, 0, 0.4),
-      0 1px 3px rgba(0, 0, 0, 0.3);
+      /* ─ Top surface: specular ridge ─ */
+      inset 0 1px 0 0 hsl(0 0% 92% / 0.6),
+      inset 0 2px 1px 0 hsl(0 0% 85% / 0.3),
+      /* ─ Bottom: dark undercut of key ─ */
+      inset 0 -1px 2px 0 hsl(215 8% 24%),
+      inset 0 -3px 6px 0 hsl(215 8% 18%),
+      /* ─ Key elevation ─ */
+      0 3px 2px rgba(0,0,0,0.2),
+      0 5px 8px -1px rgba(0,0,0,0.35),
+      0 8px 16px -3px rgba(0,0,0,0.3),
+      /* ─ Subtle ambient reflection below key ─ */
+      0 1px 0 hsl(215 5% 50% / 0.3);
   }
 
   .macropad-key-silver:hover {
-    background: linear-gradient(180deg, hsl(220 8% 40%), hsl(220 8% 26%));
-    border-color: hsl(220 8% 44%);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.25) 0%,
+        rgba(255,255,255, 0.10) 25%,
+        transparent 50%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(215 5% 84%) 0%,
+        hsl(215 4% 74%) 10%,
+        hsl(215 4% 64%) 30%,
+        hsl(215 4% 56%) 60%,
+        hsl(215 5% 48%) 85%,
+        hsl(215 5% 44%) 100%
+      );
+    border-color: hsl(215 4% 68%);
+    border-bottom-color: hsl(215 6% 34%);
+    border-right-color: hsl(215 6% 38%);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 95% / 0.7),
+      inset 0 2px 1px 0 hsl(0 0% 88% / 0.35),
+      inset 0 -1px 2px 0 hsl(215 8% 26%),
+      inset 0 -3px 6px 0 hsl(215 8% 20%),
+      0 4px 3px rgba(0,0,0,0.2),
+      0 6px 10px -1px rgba(0,0,0,0.35),
+      0 10px 20px -3px rgba(0,0,0,0.3),
+      0 1px 0 hsl(215 5% 52% / 0.3);
   }
 
   .macropad-key-silver:active,
   .macropad-key-pressed.macropad-key-silver {
-    background: linear-gradient(180deg, hsl(220 8% 18%), hsl(220 8% 22%));
+    background:
+      linear-gradient(
+        180deg,
+        hsl(215 5% 36%) 0%,
+        hsl(215 4% 42%) 40%,
+        hsl(215 4% 46%) 100%
+      );
+    border-color: hsl(215 5% 38%);
     box-shadow:
-      0 -1px 0 hsl(220 8% 30%) inset,
-      0 2px 4px hsl(220 10% 10%) inset;
-    transform: translateY(1px);
+      /* Key pressed down — deep inset */
+      inset 0 3px 8px rgba(0,0,0,0.55),
+      inset 0 1px 3px rgba(0,0,0,0.45),
+      inset 0 6px 12px -2px rgba(0,0,0,0.3),
+      0 0 1px rgba(0,0,0,0.3);
+    transform: translateY(2px);
   }
 
+  /* ── Shutdown Keycap — Bright Orange ──
+     Same 3D treatment but with warm orange tones
+     and ambient glow ring around the key. */
   .macropad-key-shutdown {
-    background: linear-gradient(180deg, hsl(25 90% 55%), hsl(15 85% 40%));
-    border-color: hsl(25 80% 50%);
+    background:
+      /* Specular highlight */
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.22) 0%,
+        rgba(255,255,200, 0.08) 25%,
+        transparent 50%
+      ),
+      /* Orange chrome gradient */
+      linear-gradient(
+        180deg,
+        hsl(32 100% 68%) 0%,
+        hsl(28 95% 60%) 10%,
+        hsl(24 90% 52%) 30%,
+        hsl(20 88% 45%) 60%,
+        hsl(16 85% 38%) 85%,
+        hsl(12 82% 34%) 100%
+      );
+    border-color: hsl(28 90% 60%);
+    border-bottom-color: hsl(12 80% 28%);
+    border-right-color: hsl(12 80% 30%);
+    color: hsl(15 90% 12%);
     box-shadow:
-      0 1px 0 hsl(25 90% 65%) inset,
-      0 -1px 2px hsl(15 85% 30%) inset,
-      0 4px 8px -2px rgba(0, 0, 0, 0.4),
-      0 0 12px hsl(25 90% 50% / 0.15);
+      inset 0 1px 0 0 hsl(35 100% 78% / 0.7),
+      inset 0 2px 1px 0 hsl(30 100% 72% / 0.4),
+      inset 0 -1px 2px 0 hsl(10 80% 24%),
+      inset 0 -3px 6px 0 hsl(10 80% 18%),
+      0 3px 2px rgba(0,0,0,0.2),
+      0 5px 8px -1px rgba(0,0,0,0.35),
+      0 8px 16px -3px rgba(0,0,0,0.3),
+      /* Ambient orange glow */
+      0 0 20px hsl(25 95% 50% / 0.2),
+      0 0 40px hsl(25 95% 50% / 0.08);
   }
 
   .macropad-key-shutdown:hover {
-    background: linear-gradient(180deg, hsl(25 90% 60%), hsl(15 85% 45%));
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.30) 0%,
+        rgba(255,255,200, 0.12) 25%,
+        transparent 50%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(32 100% 74%) 0%,
+        hsl(28 95% 66%) 10%,
+        hsl(24 90% 58%) 30%,
+        hsl(20 88% 50%) 60%,
+        hsl(16 85% 42%) 85%,
+        hsl(12 82% 38%) 100%
+      );
+    border-color: hsl(28 90% 66%);
     box-shadow:
-      0 1px 0 hsl(25 90% 70%) inset,
-      0 -1px 2px hsl(15 85% 30%) inset,
-      0 4px 8px -2px rgba(0, 0, 0, 0.4),
-      0 0 16px hsl(25 90% 50% / 0.25);
+      inset 0 1px 0 0 hsl(35 100% 82% / 0.8),
+      inset 0 2px 1px 0 hsl(30 100% 76% / 0.45),
+      inset 0 -1px 2px 0 hsl(10 80% 26%),
+      inset 0 -3px 6px 0 hsl(10 80% 20%),
+      0 4px 3px rgba(0,0,0,0.2),
+      0 6px 10px -1px rgba(0,0,0,0.35),
+      0 0 28px hsl(25 95% 50% / 0.3),
+      0 0 56px hsl(25 95% 50% / 0.12);
   }
 
   .macropad-key-shutdown:active,
   .macropad-key-pressed.macropad-key-shutdown {
-    background: linear-gradient(180deg, hsl(15 85% 35%), hsl(15 85% 40%));
+    background:
+      linear-gradient(
+        180deg,
+        hsl(16 85% 30%) 0%,
+        hsl(20 88% 36%) 40%,
+        hsl(24 90% 40%) 100%
+      );
+    border-color: hsl(18 82% 32%);
     box-shadow:
-      0 -1px 0 hsl(25 80% 45%) inset,
-      0 2px 4px hsl(15 85% 25%) inset;
-    transform: translateY(1px);
+      inset 0 3px 8px rgba(0,0,0,0.55),
+      inset 0 1px 3px rgba(0,0,0,0.45),
+      inset 0 6px 12px -2px rgba(0,0,0,0.3),
+      0 0 14px hsl(25 90% 50% / 0.15);
+    transform: translateY(2px);
   }
 
+  /* ── Small Header-Bar Metal Buttons ── */
   .macropad-key-small {
     @apply flex items-center gap-1 px-2.5 py-1 font-mono text-xs rounded-lg cursor-pointer;
-    color: hsl(220 10% 65%);
-    background: linear-gradient(180deg, hsl(220 8% 30%), hsl(220 8% 20%));
-    border: 1px solid hsl(220 8% 34%);
+    color: hsl(215 6% 18%);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.14) 0%,
+        rgba(255,255,255, 0.04) 30%,
+        transparent 60%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(215 4% 74%) 0%,
+        hsl(215 4% 60%) 50%,
+        hsl(215 4% 50%) 100%
+      );
+    border: 1px solid hsl(215 4% 62%);
+    border-bottom-color: hsl(215 6% 34%);
     box-shadow:
-      0 1px 0 hsl(220 8% 36%) inset,
-      0 2px 4px rgba(0, 0, 0, 0.3);
+      inset 0 1px 0 hsl(0 0% 88% / 0.5),
+      inset 0 -1px 2px hsl(215 8% 26%),
+      0 2px 4px rgba(0,0,0,0.3),
+      0 1px 0 hsl(215 5% 48% / 0.3);
+    position: relative;
+    z-index: 2;
+    transition: all 0.08s ease;
   }
 
   .macropad-key-small:hover {
-    background: linear-gradient(180deg, hsl(220 8% 35%), hsl(220 8% 24%));
-    color: hsl(220 10% 80%);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.20) 0%,
+        rgba(255,255,255, 0.06) 30%,
+        transparent 60%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(215 4% 80%) 0%,
+        hsl(215 4% 66%) 50%,
+        hsl(215 4% 56%) 100%
+      );
+    color: hsl(215 8% 12%);
   }
 
   .macropad-key-small:active {
-    background: linear-gradient(180deg, hsl(220 8% 17%), hsl(220 8% 20%));
-    box-shadow: 0 1px 3px hsl(220 10% 8%) inset;
+    background:
+      linear-gradient(
+        180deg,
+        hsl(215 4% 40%) 0%,
+        hsl(215 4% 46%) 50%,
+        hsl(215 4% 50%) 100%
+      );
+    box-shadow: inset 0 2px 5px hsl(215 10% 12%);
     transform: translateY(1px);
   }
 
-  /* LCD Display — dark recessed screen */
+  /* ── LCD Display — Recessed Screen ──
+     Deep shadow well simulating a screen embedded into
+     the metal, with subtle green phosphor tint, scan-lines,
+     and a small reflection highlight on the glass surface. */
   .lcd-display {
-    background: linear-gradient(180deg, hsl(200 20% 6%), hsl(200 15% 9%));
-    border: 1px solid hsl(200 10% 14%);
+    background:
+      /* Subtle glass reflection on LCD surface */
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.03) 0%,
+        transparent 30%,
+        transparent 100%
+      ),
+      /* Screen gradient */
+      linear-gradient(
+        180deg,
+        hsl(170 25% 4%) 0%,
+        hsl(170 20% 5.5%) 40%,
+        hsl(170 18% 6.5%) 100%
+      );
+    border: 2px solid hsl(215 6% 16%);
+    border-top-color: hsl(215 8% 10%);
+    border-left-color: hsl(215 8% 12%);
+    border-bottom-color: hsl(215 5% 24%);
+    border-right-color: hsl(215 5% 22%);
     border-radius: 0.5rem;
     box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.5) inset,
-      0 -1px 0 hsl(220 8% 25%);
+      /* Deep recess — the screen sits inside the metal */
+      inset 0 2px 8px rgba(0,0,0,0.75),
+      inset 0 4px 12px rgba(0,0,0,0.45),
+      inset 0 1px 2px rgba(0,0,0,0.85),
+      inset 2px 2px 4px rgba(0,0,0,0.3),
+      /* Bottom-right: metal edge reflection below screen */
+      0 1px 0 hsl(215 6% 44%),
+      1px 1px 0 hsl(215 6% 38%);
+    position: relative;
+    overflow: hidden;
   }
 
+  /* Scan-line overlay */
+  .lcd-display::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0, 0.06) 2px,
+      rgba(0,0,0, 0.06) 4px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 1;
+  }
+
+  /* LCD phosphor text glow */
   .lcd-text {
-    text-shadow: 0 0 8px currentColor;
+    text-shadow:
+      0 0 4px hsl(160 70% 48% / 0.7),
+      0 0 10px hsl(160 70% 48% / 0.35),
+      0 0 20px hsl(160 70% 48% / 0.15),
+      0 0 30px hsl(160 70% 48% / 0.06);
+  }
+
+  /* ── Decorative Screws ──
+     Phillips-head screw with specular highlight.  */
+  .macropad-screw {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background:
+      /* Specular dot */
+      radial-gradient(
+        circle at 30% 30%,
+        hsl(0 0% 82%) 0%,
+        hsl(215 4% 58%) 25%,
+        hsl(215 5% 42%) 55%,
+        hsl(215 5% 32%) 100%
+      );
+    box-shadow:
+      /* Bright top-left highlight */
+      inset 1px 1px 1px hsl(0 0% 80% / 0.5),
+      /* Dark bottom-right */
+      inset -1px -1px 1px hsl(215 8% 14% / 0.6),
+      /* Seat shadow */
+      0 1px 3px rgba(0,0,0,0.45);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* Phillips cross slot */
+  .macropad-screw::before,
+  .macropad-screw::after {
+    content: "";
+    position: absolute;
+    background: hsl(215 8% 20%);
+    border-radius: 0.5px;
+    box-shadow: 0 0.5px 0 hsl(215 4% 50% / 0.3);
+  }
+
+  .macropad-screw::before {
+    width: 7px;
+    height: 1px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .macropad-screw::after {
+    width: 1px;
+    height: 7px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ── Overlay Backdrop & Panel ── */
+  .overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(10px);
+    animation: overlayFadeIn 0.25s ease-out;
+  }
+
+  @keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .overlay-panel {
+    background:
+      /* Specular highlight */
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.07) 0%,
+        rgba(255,255,255, 0.02) 20%,
+        transparent 40%,
+        transparent 75%,
+        rgba(0,0,0, 0.06) 100%
+      ),
+      /* Metal body */
+      linear-gradient(
+        160deg,
+        hsl(215 6% 40%) 0%,
+        hsl(215 6% 30%) 25%,
+        hsl(215 6% 24%) 50%,
+        hsl(215 6% 20%) 75%,
+        hsl(215 6% 16%) 100%
+      );
+    border: 1px solid hsl(215 6% 46%);
+    border-bottom-color: hsl(215 8% 12%);
+    border-right-color: hsl(215 8% 14%);
+    border-radius: 1.25rem;
+    box-shadow:
+      inset 0 1px 0 0 hsl(215 6% 58%),
+      inset 0 2px 1px 0 hsl(215 6% 50%),
+      inset 1px 0 0 0 hsl(215 6% 48%),
+      inset 0 -1px 0 0 hsl(215 8% 10%),
+      inset -1px 0 0 0 hsl(215 6% 16%),
+      0 4px 8px rgba(0,0,0,0.3),
+      0 16px 48px -8px rgba(0,0,0,0.6),
+      0 24px 72px -12px rgba(0,0,0,0.4);
+    position: relative;
+    animation: overlaySlideIn 0.3s ease-out;
+  }
+
+  /* Brushed grain on overlay */
+  .overlay-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(255,255,255, 0.015) 1px,
+      transparent 2px,
+      rgba(0,0,0, 0.018) 3px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+
+  /* Ambient top reflection on overlay */
+  .overlay-panel::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 35%;
+    border-radius: inherit;
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255, 0.035) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes overlaySlideIn {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* ── Metal Header Bar ── */
+  .metal-header {
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.06) 0%,
+        transparent 30%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(215 6% 46%) 0%,
+        hsl(215 6% 36%) 50%,
+        hsl(215 6% 30%) 100%
+      );
+    border: 1px solid hsl(215 6% 50%);
+    border-bottom-color: hsl(215 8% 18%);
+    border-radius: 0.5rem;
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 78% / 0.2),
+      inset 0 -1px 0 hsl(215 8% 14%),
+      0 2px 6px rgba(0,0,0,0.3),
+      0 1px 0 hsl(215 5% 42% / 0.2);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Metal Chassis (full-screen background) ── */
+  .metal-chassis {
+    background:
+      /* Ambient top-down light gradient */
+      radial-gradient(
+        ellipse 120% 60% at 50% 0%,
+        rgba(255,255,255, 0.04) 0%,
+        transparent 70%
+      ),
+      /* Base metal */
+      linear-gradient(
+        160deg,
+        hsl(215 6% 30%) 0%,
+        hsl(215 6% 22%) 30%,
+        hsl(215 6% 17%) 60%,
+        hsl(215 6% 13%) 100%
+      );
+    width: 100%;
+    height: 100%;
+    min-width: 100vw;
+    min-height: 100dvh;
+    position: relative;
+  }
+
+  .metal-chassis::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(255,255,255, 0.01) 1px,
+      transparent 2px,
+      rgba(0,0,0, 0.015) 3px,
+      transparent 4px
+    );
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  /* ── LCD Button (clickable LCD) ── */
+  .lcd-button {
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.03) 0%,
+        transparent 30%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(170 25% 4%) 0%,
+        hsl(170 20% 5.5%) 40%,
+        hsl(170 18% 6.5%) 100%
+      );
+    border: 2px solid hsl(215 6% 16%);
+    border-top-color: hsl(215 8% 10%);
+    border-left-color: hsl(215 8% 12%);
+    border-bottom-color: hsl(215 5% 24%);
+    border-right-color: hsl(215 5% 22%);
+    border-radius: 0.5rem;
+    box-shadow:
+      inset 0 2px 8px rgba(0,0,0,0.75),
+      inset 0 4px 12px rgba(0,0,0,0.45),
+      inset 0 1px 2px rgba(0,0,0,0.85),
+      inset 2px 2px 4px rgba(0,0,0,0.3),
+      0 1px 0 hsl(215 6% 44%),
+      1px 1px 0 hsl(215 6% 38%);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.15s ease;
+  }
+
+  .lcd-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0, 0.06) 2px,
+      rgba(0,0,0, 0.06) 4px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 1;
+  }
+
+  .lcd-button:hover {
+    box-shadow:
+      inset 0 2px 8px rgba(0,0,0,0.75),
+      inset 0 4px 12px rgba(0,0,0,0.45),
+      inset 0 1px 2px rgba(0,0,0,0.85),
+      inset 2px 2px 4px rgba(0,0,0,0.3),
+      0 1px 0 hsl(215 6% 44%),
+      0 0 14px hsl(160 70% 48% / 0.12);
+    border-bottom-color: hsl(160 35% 20%);
+    border-right-color: hsl(160 35% 18%);
+  }
+
+  .lcd-button:active {
+    box-shadow:
+      inset 0 3px 10px rgba(0,0,0,0.85),
+      inset 0 6px 14px rgba(0,0,0,0.5);
+    transform: translateY(1px);
+  }
+
+  /* ── Overlay Close Button ── */
+  .metal-close-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background:
+      radial-gradient(
+        circle at 35% 35%,
+        hsl(0 0% 82%) 0%,
+        hsl(215 4% 60%) 40%,
+        hsl(215 5% 44%) 100%
+      );
+    border: 1px solid hsl(215 4% 58%);
+    border-bottom-color: hsl(215 6% 30%);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 88% / 0.5),
+      inset 0 -1px 2px hsl(215 8% 22%),
+      0 2px 4px rgba(0,0,0,0.35),
+      0 1px 0 hsl(215 5% 46% / 0.3);
+    color: hsl(215 8% 18%);
+    transition: all 0.08s ease;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
+  .metal-close-btn:hover {
+    background:
+      radial-gradient(
+        circle at 35% 35%,
+        hsl(0 0% 90%) 0%,
+        hsl(215 4% 68%) 40%,
+        hsl(215 5% 52%) 100%
+      );
+  }
+
+  .metal-close-btn:active {
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        hsl(215 5% 44%) 0%,
+        hsl(215 5% 38%) 100%
+      );
+    box-shadow: inset 0 2px 4px hsl(215 10% 14%);
+    transform: translateY(1px);
+  }
+
+  /* ── Branding Badge ── */
+  .brand-badge {
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255, 0.05) 0%,
+        transparent 30%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(215 6% 34%) 0%,
+        hsl(215 6% 26%) 100%
+      );
+    border: 1px solid hsl(215 6% 38%);
+    border-bottom-color: hsl(215 8% 14%);
+    border-radius: 0.5rem;
+    box-shadow:
+      inset 0 1px 0 hsl(215 6% 44%),
+      inset 0 -1px 0 hsl(215 8% 14%),
+      0 1px 3px rgba(0,0,0,0.25);
+    position: relative;
+    z-index: 2;
   }
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { KeyRound, LogIn } from "lucide-react";
 import { login } from "@/lib/api";
@@ -27,44 +26,55 @@ export function LoginScreen({ onLogin, onCancel }: LoginScreenProps) {
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-background animate-fade-in">
+    <div className="absolute inset-0 flex items-center justify-center metal-chassis animate-fade-in">
       <form
         onSubmit={handleSubmit}
-        className="glass-panel p-8 w-full max-w-sm flex flex-col gap-6"
+        className="macropad-body p-8 w-full max-w-sm flex flex-col gap-6"
       >
-        <div className="flex flex-col items-center gap-3">
-          <KeyRound className="w-10 h-10 text-primary" />
-          <h2 className="text-lg font-mono text-foreground tracking-wider">MANUAL LOGIN</h2>
+        {/* Header */}
+        <div className="flex flex-col items-center gap-3 relative z-10">
+          <div className="lcd-display p-3 rounded-full">
+            <KeyRound className="w-8 h-8 text-primary relative z-10" />
+          </div>
+          <h2 className="text-sm font-mono text-foreground/60 tracking-[0.3em] uppercase">Manual Login</h2>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <Input
-            placeholder="User ID"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            className="font-mono bg-secondary border-border"
-            autoFocus
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="font-mono bg-secondary border-border"
-          />
+        {/* Input fields styled as recessed LCD areas */}
+        <div className="flex flex-col gap-3 relative z-10">
+          <div className="lcd-display p-0.5">
+            <Input
+              placeholder="User ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              className="font-mono bg-transparent border-0 text-primary placeholder:text-primary/30 focus-visible:ring-0 focus-visible:ring-offset-0 relative z-10"
+              autoFocus
+            />
+          </div>
+          <div className="lcd-display p-0.5">
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="font-mono bg-transparent border-0 text-primary placeholder:text-primary/30 focus-visible:ring-0 focus-visible:ring-offset-0 relative z-10"
+            />
+          </div>
         </div>
 
         {error && (
-          <span className="text-sm font-mono text-destructive text-center">{error}</span>
+          <div className="lcd-display px-3 py-2 relative z-10">
+            <span className="text-xs font-mono text-red-400 lcd-text text-center block relative z-10">{error}</span>
+          </div>
         )}
 
-        <div className="flex gap-3">
-          <Button type="button" variant="secondary" className="flex-1 font-mono" onClick={onCancel}>
+        {/* Action buttons as metal keycaps */}
+        <div className="flex gap-3 relative z-10">
+          <button type="button" className="macropad-key macropad-key-silver flex-1 py-2.5 flex items-center justify-center gap-2 font-mono text-xs" onClick={onCancel}>
             Cancel
-          </Button>
-          <Button type="submit" className="flex-1 font-mono gap-2">
+          </button>
+          <button type="submit" className="macropad-key macropad-key-silver flex-1 py-2.5 flex items-center justify-center gap-2 font-mono text-xs">
             <LogIn className="w-4 h-4" /> Login
-          </Button>
+          </button>
         </div>
       </form>
     </div>

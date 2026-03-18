@@ -6,10 +6,6 @@ export function getConfig(): ConfigType {
   return {
     LAPTOP_IP: "10.41.182.79",
     LAPTOP_PORT: 8000,
-    OPENWEATHER_API_KEY: "",
-    OPENWEATHER_CITY: "New York",
-    GOOGLE_CALENDAR_API_KEY: "",
-    GOOGLE_CALENDAR_ID: "",
     MOTION_SENSITIVITY: 30,
     SESSION_TIMEOUT_SECONDS: 30,
   };

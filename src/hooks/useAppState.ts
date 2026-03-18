@@ -12,7 +12,7 @@ export interface SessionAnalytics {
 }
 
 export function useAppState() {
-  const { videoRef, canvasRef, captureFrame, cameraReady } = useMotionDetector();
+  const { videoRef, canvasRef, captureFrame, cameraReady, presenceDetected } = useMotionDetector();
   const [state, setState] = useState<AppState>("idle");
   const [userId, setUserId] = useState<string>("");
   const [analytics, setAnalytics] = useState<SessionAnalytics>({
@@ -25,18 +25,35 @@ export function useAppState() {
   const sessionStartRef = useRef<number | null>(null);
   const isRecognizingRef = useRef(false);
   const idleTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const presenceTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hasTriedForCurrentPresenceRef = useRef(false);
+  const recognizeAbortRef = useRef<AbortController | null>(null);
 
-  const handleRecognition = useCallback(async () => {
+  const getFrameWithRetries = useCallback(async (attempts: number, delayMs: number) => {
+    for (let i = 0; i < attempts; i++) {
+      const frame = captureFrame();
+      if (frame) return frame;
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+    return null;
+  }, [captureFrame]);
+
+  const handleRecognitionOnce = useCallback(async (opts?: { allowWhenAuthenticated?: boolean }) => {
     if (isRecognizingRef.current) return;
+    if (!opts?.allowWhenAuthenticated && state === "authenticated") return;
+    if (!cameraReady) return;
     isRecognizingRef.current = true;
 
     try {
-      const frame = captureFrame();
-      if (!frame) return;
+      // Cancel any stuck recognition call so Retry feels responsive.
+      if (recognizeAbortRef.current) recognizeAbortRef.current.abort();
+      const abort = new AbortController();
+      recognizeAbortRef.current = abort;
 
-      const result = await recognizeFace(frame);
-      if (!result) return;
+      const frame = await getFrameWithRetries(6, 120);
+      if (!frame) return false;
+
+      const result = await recognizeFace(frame, { signal: abort.signal, timeoutMs: 6000 });
+      if (!result) return true;
 
       if (result.authenticated && result.user_id) {
         if (state !== "authenticated") {
@@ -52,27 +69,28 @@ export function useAppState() {
         }
         lastActivityRef.current = Date.now();
       } else {
-        if (state === "idle") {
+        if (state === "idle" || state === "locked") {
           setState("locked");
           logEvent("auth_fail", result.user_id || "unknown");
         }
       }
+      return true;
     } finally {
       isRecognizingRef.current = false;
+      recognizeAbortRef.current = null;
     }
-  }, [captureFrame, state]);
+  }, [cameraReady, getFrameWithRetries, state]);
 
   const triggerRecognition = useCallback(() => {
-    if (cameraReady) {
-      handleRecognition();
-    }
-  }, [cameraReady, handleRecognition]);
+    handleRecognitionOnce();
+  }, [handleRecognitionOnce]);
 
   const handleManualLogin = useCallback((loginUserId: string) => {
     setState("authenticated");
     setUserId(loginUserId);
     sessionStartRef.current = Date.now();
     lastActivityRef.current = Date.now();
+    hasTriedForCurrentPresenceRef.current = false;
     setAnalytics((prev) => ({
       ...prev,
       sessionCount: prev.sessionCount + 1,
@@ -94,77 +112,56 @@ export function useAppState() {
     sessionStartRef.current = null;
     setState("idle");
     setUserId("");
+    hasTriedForCurrentPresenceRef.current = false;
   }, [userId]);
 
   const handleLock = useCallback(() => {
     setState("idle");
+    hasTriedForCurrentPresenceRef.current = false;
   }, []);
 
   const showAdmin = useCallback(() => setState("admin"), []);
   const backToDashboard = useCallback(() => setState("authenticated"), []);
 
   const showLogin = useCallback(() => setState("login"), []);
-  const cancelLogin = useCallback(() => setState("idle"), []);
-  const retryRecognition = useCallback(() => {
+  const cancelLogin = useCallback(() => {
     setState("idle");
-    setTimeout(() => triggerRecognition(), 500);
-  }, [triggerRecognition]);
-  const cancelLocked = useCallback(() => setState("idle"), []);
+    hasTriedForCurrentPresenceRef.current = false;
+  }, []);
+  const retryRecognition = useCallback(() => {
+    // Important: do NOT go back to idle here, otherwise the idle polling will
+    // start spamming recognition attempts. Retry should run exactly once.
+    hasTriedForCurrentPresenceRef.current = true;
+    void handleRecognitionOnce();
+  }, [handleRecognitionOnce]);
+  const cancelLocked = useCallback(() => {
+    setState("idle");
+    hasTriedForCurrentPresenceRef.current = false;
+  }, []);
 
-  // Run recognition when camera becomes ready
+  // Flow requirement:
+  // Static (idle) -> Face detected (local presence) -> Run recognition ONCE.
+  // After that, recognition only runs again if user explicitly presses Retry.
   useEffect(() => {
-    if (cameraReady) {
-      handleRecognition();
-    }
-  }, [cameraReady, handleRecognition]);
+    if (state !== "idle") return;
+    if (!cameraReady) return;
+    if (!presenceDetected) return;
+    if (hasTriedForCurrentPresenceRef.current) return;
 
-  // When idle and camera is ready, periodically try to recognize a face
+    void (async () => {
+      const attempted = await handleRecognitionOnce();
+      // Only "consume" the one automatic attempt if we actually captured a frame
+      // and started the recognition call. Otherwise, keep waiting.
+      if (attempted) hasTriedForCurrentPresenceRef.current = true;
+    })();
+  }, [state, cameraReady, presenceDetected, handleRecognitionOnce]);
+
+  // When presence disappears, allow a new automatic attempt next time.
   useEffect(() => {
-    if (!cameraReady || state !== "idle") return;
-
-    const interval = setInterval(() => {
-      triggerRecognition();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [cameraReady, state, triggerRecognition]);
-
-  // Presence check — when authenticated, periodically check if a face is in frame
-  useEffect(() => {
-    if (state !== "authenticated") {
-      if (presenceTimerRef.current) {
-        clearInterval(presenceTimerRef.current);
-        presenceTimerRef.current = null;
-      }
-      return;
-    }
-
-    let missCount = 0;
-    presenceTimerRef.current = setInterval(async () => {
-      const frame = captureFrame();
-      if (!frame) return;
-
-      try {
-        const result = await recognizeFace(frame);
-        if (result && result.authenticated) {
-          missCount = 0;
-          lastActivityRef.current = Date.now();
-        } else {
-          missCount++;
-          // Lock after 3 consecutive misses (~9 seconds)
-          if (missCount >= 3) {
-            handleLogout();
-          }
-        }
-      } catch {
-        // ignore
-      }
-    }, 3000);
-
-    return () => {
-      if (presenceTimerRef.current) clearInterval(presenceTimerRef.current);
-    };
-  }, [state, captureFrame, handleLogout]);
+    if (state !== "idle") return;
+    if (presenceDetected) return;
+    hasTriedForCurrentPresenceRef.current = false;
+  }, [state, presenceDetected]);
 
   // Session timeout
   useEffect(() => {
@@ -178,6 +175,7 @@ export function useAppState() {
 
       if (state === "locked" && elapsed > 10000) {
         setState("idle");
+        hasTriedForCurrentPresenceRef.current = false;
       }
     }, 2000);
 

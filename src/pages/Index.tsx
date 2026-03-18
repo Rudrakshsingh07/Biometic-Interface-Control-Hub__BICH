@@ -15,7 +15,7 @@ const Index = () => {
   const isAdmin = userId === "admin";
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-background">
+    <div className="relative w-screen h-[100dvh] overflow-hidden bg-background">
       <video ref={videoRef} className="hidden" playsInline muted autoPlay />
       <canvas ref={canvasRef} className="hidden" />
 

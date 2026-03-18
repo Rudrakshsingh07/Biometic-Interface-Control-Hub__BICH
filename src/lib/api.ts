@@ -5,13 +5,23 @@ interface RecognizeResponse {
   user_id: string;
 }
 
-export async function recognizeFace(imageBase64: string): Promise<RecognizeResponse | null> {
+export async function recognizeFace(
+  imageBase64: string,
+  opts?: { signal?: AbortSignal; timeoutMs?: number }
+): Promise<RecognizeResponse | null> {
   try {
+    const timeoutMs = opts?.timeoutMs ?? 6000;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const signal = opts?.signal ? AbortSignal.any([opts.signal, controller.signal]) : controller.signal;
+
     const res = await fetch(`${getApiBase()}/recognize`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: imageBase64 }),
+      signal,
     });
+    clearTimeout(timeoutId);
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -117,52 +127,10 @@ export interface WeatherData {
   feelsLike: number;
 }
 
-export async function fetchWeather(apiKey: string, city: string): Promise<WeatherData | null> {
-  if (!apiKey || !city) return null;
-  try {
-    const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return {
-      temp: Math.round(data.main.temp),
-      description: data.weather[0]?.description ?? "",
-      icon: data.weather[0]?.icon ?? "01d",
-      humidity: data.main.humidity,
-      feelsLike: Math.round(data.main.feels_like),
-    };
-  } catch {
-    return null;
-  }
-}
-
 export interface CalendarEvent {
   summary: string;
   start: string;
   end: string;
 }
 
-export async function fetchCalendarEvents(
-  apiKey: string,
-  calendarId: string
-): Promise<CalendarEvent[]> {
-  if (!apiKey || !calendarId) return [];
-  try {
-    const now = new Date().toISOString();
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
-    const res = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${apiKey}&timeMin=${now}&timeMax=${endOfDay.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=5`
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return (data.items ?? []).map((item: any) => ({
-      summary: item.summary ?? "No title",
-      start: item.start?.dateTime ?? item.start?.date ?? "",
-      end: item.end?.dateTime ?? item.end?.date ?? "",
-    }));
-  } catch {
-    return [];
-  }
-}
+// Calendar + weather removed from project.

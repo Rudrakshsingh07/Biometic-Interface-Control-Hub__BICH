@@ -128,6 +128,48 @@ def decode_image(image_str: str) -> bytes:
         image_str = image_str.split(",")[1]
     return base64.b64decode(image_str)
 
+def _utc_iso() -> str:
+    return datetime.datetime.utcnow().isoformat()
+
+def _take_screenshot(dest_path: str):
+    """
+    Best-effort full-screen screenshot without UI prompts.
+    Tries common tools in order. Returns (ok, tool_name, error_message).
+    """
+    candidates = [
+        ("grim", ["grim", dest_path]),                     # Wayland
+        ("gnome-screenshot", ["gnome-screenshot", "-f", dest_path]),  # GNOME (X11/Wayland)
+        ("scrot", ["scrot", dest_path]),                   # X11
+        ("import", ["import", "-window", "root", dest_path]),        # ImageMagick (X11)
+    ]
+    last_err = ""
+    for tool, cmd in candidates:
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            if res.returncode == 0 and os.path.exists(dest_path) and os.path.getsize(dest_path) > 0:
+                return True, tool, ""
+            last_err = (res.stderr or res.stdout or "").strip() or f"{tool} failed"
+        except FileNotFoundError:
+            last_err = f"{tool} not installed"
+        except Exception as e:
+            last_err = str(e)
+    return False, "", last_err
+
+def _notify(message: str):
+    try:
+        subprocess.run(["notify-send", message], check=False)
+    except Exception:
+        pass
+
+def _kdeconnect_share(filepath: str):
+    # Optional: share to paired device if DEVICE_NAME is configured.
+    if not DEVICE_NAME or DEVICE_NAME == "your_device_name":
+        return
+    try:
+        subprocess.run(["kdeconnect-cli", "-n", DEVICE_NAME, "--share", filepath], check=False)
+    except Exception:
+        pass
+
 # ── Routes ─────────────────────────────────────────────────────────────────────
 @app.get("/")
 def root():
@@ -287,6 +329,49 @@ def login(payload: LoginPayload):
         return {"status": "error", "error": "invalid credentials"}
     return {"status": "ok", "username": username, "role": row[1]}
 
+@app.get("/notifications")
+def notifications():
+    """
+    Best-effort notifications feed.
+    If KDE Connect is available and paired, return recent notifications.
+    Otherwise return an empty list.
+    """
+    try:
+        # kdeconnect-cli output format can vary; keep parsing conservative.
+        res = subprocess.run(
+            ["kdeconnect-cli", "--list-notifications"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        out = (res.stdout or "").strip()
+        if not out:
+            return {"notifications": []}
+
+        # Very tolerant parsing: each line may contain an id + title.
+        # Example-ish: "<id>: <title>"
+        items = []
+        for line in out.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if ":" in line:
+                nid, title = line.split(":", 1)
+                items.append({
+                    "id": nid.strip(),
+                    "title": title.strip(),
+                    "timestamp": _utc_iso(),
+                })
+            else:
+                items.append({
+                    "id": line,
+                    "title": line,
+                    "timestamp": _utc_iso(),
+                })
+        return {"notifications": items[:30]}
+    except Exception:
+        return {"notifications": []}
+
 @app.post("/log")
 def log_event(payload: LogPayload):
     try:
@@ -309,6 +394,24 @@ def get_analytics():
 
 @app.post("/command")
 def run_command(payload: CommandPayload):
+    if payload.action == "capture_inspiration":
+        try:
+            ideas_dir = os.path.expanduser("~/Pictures/Ideas")
+            os.makedirs(ideas_dir, exist_ok=True)
+            ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            filename = f"inspiration_{ts}.png"
+            dest = os.path.join(ideas_dir, filename)
+
+            ok, tool, err = _take_screenshot(dest)
+            if not ok:
+                return {"status": "error", "error": f"Screenshot failed: {err}"}
+
+            _notify("Idea captured!")
+            _kdeconnect_share(dest)
+            return {"status": "ok", "action": payload.action, "path": dest, "tool": tool}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
     cmd = COMMANDS.get(payload.action)
     if cmd:
         try:

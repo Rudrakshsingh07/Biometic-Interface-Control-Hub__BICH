@@ -1,5 +1,4 @@
 import { ClockDisplay } from "@/components/ClockDisplay";
-import { Button } from "@/components/ui/button";
 import { ShieldAlert, RefreshCw, LogIn } from "lucide-react";
 
 interface LockedScreenProps {
@@ -9,25 +8,31 @@ interface LockedScreenProps {
 
 export function LockedScreen({ onRetry, onManualLogin }: LockedScreenProps) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-background animate-fade-in">
+    <div className="absolute inset-0 flex flex-col items-center justify-center metal-chassis animate-fade-in">
       <div className="flex flex-col items-center gap-6">
-        <div className="relative">
-          <ShieldAlert className="w-16 h-16 text-warning" />
-          <div className="absolute inset-0 w-16 h-16 rounded-full border-2 border-warning/30 animate-pulse-glow" />
+        {/* Warning icon in LCD */}
+        <div className="lcd-display p-6 flex flex-col items-center gap-3">
+          <div className="relative z-10">
+            <ShieldAlert className="w-14 h-14 text-amber-400" />
+            <div className="absolute inset-0 w-14 h-14 rounded-full border-2 border-amber-400/30 animate-pulse-glow" />
+          </div>
+          <span className="text-base font-mono text-amber-400 tracking-wider lcd-text relative z-10">UNRECOGNIZED</span>
+          <span className="text-xs font-mono text-primary/40 relative z-10">Access denied • Attempt logged</span>
         </div>
-        <span className="text-lg font-mono text-warning tracking-wider">UNRECOGNIZED</span>
-        <span className="text-sm font-mono text-muted-foreground">Access denied • Attempt logged</span>
 
-        <div className="flex gap-3 mt-4">
-          <Button variant="secondary" className="font-mono gap-2" onClick={onManualLogin}>
+        {/* Action buttons as metal keycaps */}
+        <div className="flex gap-3 mt-2">
+          <button className="macropad-key macropad-key-silver px-5 py-2.5 flex items-center gap-2 font-mono text-xs" onClick={onManualLogin}>
             <LogIn className="w-4 h-4" /> Manual Login
-          </Button>
-          <Button className="font-mono gap-2" onClick={onRetry}>
+          </button>
+          <button className="macropad-key macropad-key-silver px-5 py-2.5 flex items-center gap-2 font-mono text-xs" onClick={onRetry}>
             <RefreshCw className="w-4 h-4" /> Retry
-          </Button>
+          </button>
         </div>
       </div>
-      <div className="absolute bottom-12">
+
+      {/* Bottom Clock */}
+      <div className="absolute bottom-10">
         <ClockDisplay size="small" />
       </div>
     </div>

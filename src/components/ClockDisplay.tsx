@@ -15,12 +15,12 @@ export function ClockDisplay({ size = "large" }: ClockDisplayProps) {
 
   if (size === "small") {
     return (
-      <div className="lcd-display h-full p-4 flex flex-col items-center justify-center">
-        <span className="text-4xl font-mono font-light text-primary tracking-wider lcd-text">
+      <div className="lcd-display h-full p-3 flex flex-col items-center justify-center">
+        <span className="text-3xl font-mono font-light text-primary tracking-wider lcd-text relative z-10">
           {format(now, "HH:mm")}
         </span>
-        <span className="text-[10px] font-mono text-primary/60 mt-1 tracking-wide">
-          {format(now, "EEEE, MMM d")}
+        <span className="text-[9px] font-mono text-primary/50 mt-1 tracking-wide relative z-10">
+          {format(now, "EEE, MMM d")}
         </span>
       </div>
     );
@@ -28,10 +28,12 @@ export function ClockDisplay({ size = "large" }: ClockDisplayProps) {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <span className="text-9xl font-mono font-extralight text-foreground tracking-widest text-glow-primary">
-        {format(now, "HH:mm")}
-      </span>
-      <span className="text-lg font-mono text-muted-foreground mt-4 tracking-wide">
+      <div className="lcd-display px-12 py-8">
+        <span className="text-8xl font-mono font-extralight text-primary tracking-widest lcd-text relative z-10">
+          {format(now, "HH:mm")}
+        </span>
+      </div>
+      <span className="text-sm font-mono text-foreground/30 mt-4 tracking-wide">
         {format(now, "EEEE, MMMM d, yyyy")}
       </span>
     </div>
